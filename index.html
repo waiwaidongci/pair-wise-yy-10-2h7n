@@ -51,11 +51,63 @@
     dialog::backdrop { background: rgba(0, 0, 0, 0.3); }
     .dialog-body { padding: 16px; display: grid; gap: 10px; }
     .empty { color: var(--muted); font-size: 13px; padding: 8px 0; }
+    /* 上金粉 · 金箔批次领用与扫粉核销闸 */
+    #goldPanel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+    #goldPanel > h2 { margin: 0 0 4px; font-size: 18px; }
+    .gold-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 12px; }
+    .gold-layout { display: grid; grid-template-columns: 340px 1fr; gap: 16px; align-items: start; }
+    #goldForm { display: grid; gap: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fbfdfb; }
+    #goldForm button[type=submit] { background: var(--teal); }
+    .gold-notice { font-size: 13px; line-height: 1.5; border-radius: 6px; margin-top: 2px; }
+    .gold-notice.ok { color: #14532d; background: #e3f2e8; border: 1px solid #bcdcc8; padding: 8px 10px; }
+    .gold-notice.warn { color: #6b4c0f; background: #f8efd9; border: 1px solid #e3cd94; padding: 8px 10px; }
+    .gold-notice.bad { color: #7a2c2f; background: #f8e4e4; border: 1px solid #e2b4b5; padding: 8px 10px; }
+    .gold-notice.info { color: #33455e; background: #e7edf5; border: 1px solid #bccada; padding: 8px 10px; }
+    .gold-cols { display: grid; grid-template-columns: repeat(3, minmax(230px, 1fr)); gap: 12px; overflow-x: auto; }
+    .gold-col { background: #f9fbf9; border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-height: 200px; }
+    .gold-col h3 { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 14px; }
+    .gold-card { border: 1px solid #d7e0dc; border-left: 4px solid var(--line); background: #fff; border-radius: 7px; padding: 9px; margin-bottom: 9px; }
+    .gold-card.status-待核销 { border-left-color: var(--amber); }
+    .gold-card.status-待复核 { border-left-color: var(--red); }
+    .gold-card.status-已核销 { border-left-color: var(--teal); }
+    .gold-card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .gold-work { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .gold-lines { font-size: 12.5px; color: var(--ink); line-height: 1.6; }
+    .gold-lines .gold-bad { color: var(--red); }
+    .gold-meta { color: var(--muted); font-size: 12px; }
+    .gold-ghost { color: var(--red); font-weight: 400; }
+    .gold-badge { font-size: 11.5px; border-radius: 999px; padding: 2px 9px; color: #fff; }
+    .gold-badge.待核销 { background: var(--amber); }
+    .gold-badge.待复核 { background: var(--red); }
+    .gold-badge.已核销 { background: var(--teal); }
+    .gold-actions { margin-top: 8px; display: grid; gap: 6px; }
+    .gold-row { display: flex; gap: 6px; }
+    .gold-row input { flex: 1; }
+    .gold-row button { white-space: nowrap; padding: 7px 10px; min-height: 34px; }
+    .gold-action { display: grid; gap: 5px; }
+    .gold-correct { border-top: 1px dashed var(--line); padding-top: 7px; }
+    .gold-mini-btn { font-size: 12px; padding: 5px 9px; min-height: 30px; }
+    .gold-hint { font-size: 12px; color: var(--muted); }
+    .gold-empty { color: var(--muted); font-size: 13px; padding: 6px 0; }
+    .gold-card-history { margin-top: 6px; font-size: 12px; }
+    .gold-card-history summary { cursor: pointer; color: var(--muted); }
+    #goldHistory { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px; }
+    #goldHistory > h3 { margin: 0 0 8px; font-size: 14px; }
+    .gold-hist-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; font-size: 12.5px; padding: 3px 0; border-bottom: 1px dashed #e2eae6; }
+    .gold-type { font-size: 11.5px; border-radius: 4px; padding: 1px 7px; color: #fff; background: #5d6764; flex: none; }
+    .gold-type.领用 { background: var(--amber); }
+    .gold-type.核销 { background: var(--teal); }
+    .gold-type.待复核 { background: var(--red); }
+    .gold-type.复核 { background: var(--violet); }
+    .gold-type.更正 { background: #8a6d1d; }
+    .gold-hist-row .gold-meta { flex: none; }
     @media (max-width: 980px) {
       header { display: block; padding: 18px; }
       main { padding: 16px; }
       .top, .lists, .toolbar { grid-template-columns: 1fr; }
       .grid2 { grid-template-columns: 1fr; }
+      .gold-layout { grid-template-columns: 1fr; }
+      .gold-cols { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -117,6 +169,38 @@
         </div>
         <div id="board" class="board"></div>
       </section>
+    </section>
+
+    <section id="goldPanel">
+      <div class="gold-head">
+        <div>
+          <h2>上金粉 · 金箔批次领用与扫粉核销闸</h2>
+          <div class="sub">同批号未核销前只服务一件作品；领用信息不齐整单退回；扫粉称重核销，实耗偏差超过 3% 进待复核，复核人不得与操作者相同</div>
+        </div>
+        <button id="goldReload" class="secondary" type="button">重读存档</button>
+      </div>
+      <div class="gold-layout">
+        <form id="goldForm">
+          <h2 style="font-size:15px;margin:0">金箔领用登记</h2>
+          <label>服务作品
+            <select name="workId" id="goldWork" required><option value="">请选择作品</option></select>
+          </label>
+          <div class="grid2">
+            <label>金箔批号<input name="batchNo" required placeholder="JB-2026-001"></label>
+            <label>领用克数<input name="grams" type="number" step="0.001" min="0" required placeholder="2.50"></label>
+          </div>
+          <div class="grid2">
+            <label>扫粉室温(℃)<input name="roomTemp" type="number" step="0.1" required placeholder="24"></label>
+            <label>操作者<input name="operator" required placeholder="姓名"></label>
+          </div>
+          <div class="gold-hint">批号、克数、室温、操作者不齐时整单退回，不留半截单。</div>
+          <button type="submit">领用（整单校验）</button>
+          <div id="goldNotice" class="gold-notice"></div>
+        </form>
+
+        <div id="goldRecords" class="gold-cols"></div>
+      </div>
+      <div id="goldHistory"></div>
     </section>
   </main>
 
@@ -285,5 +369,10 @@
     save();
     render();
   </script>
+
+  <!-- 上金粉金箔闸：三块独立部分 —— 判定 / 存档 / 页面 -->
+  <script src="gold/rules.js"></script>
+  <script src="gold/store.js"></script>
+  <script src="gold/ui.js"></script>
 </body>
 </html>
